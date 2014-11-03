@@ -22,7 +22,7 @@ gulp.task('clean', ['lint'], function (cb) {
 
 gulp.task('bundle', ['clean'], function () {
     return gulp
-        .src('./src/pan.js')
+        .src('./src/' +  pkg.name + '.js')
         .pipe(browserify({
             //debug : true
         }))
