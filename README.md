@@ -3,10 +3,12 @@
 [![NPM version](https://badge.fury.io/js/fuss.svg)](http://badge.fury.io/js/fuss)
 [![Bower version](https://badge.fury.io/bo/fuss.svg)](http://badge.fury.io/bo/fuss)
 
-## Usage
+Fuss.js is an extension of server side library [Fuss](https://github.com/gajus/fuss) for handling Facebook user authorization.
+
+## API
 
 ```js
-var fuss = Fuss({appId: 'your-app-id'});
+var fuss = Fuss();
 
 /**
  * Returns a promise that is resolved as soon as the SDK has completed loading.

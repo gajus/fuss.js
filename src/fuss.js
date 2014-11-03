@@ -46,6 +46,15 @@ Fuss = function Fuss (env) {
     };
 
     /**
+     * @param {Object} options
+     * @param {Function} options.callback
+     * @param {Array} options.scope
+     */
+    fuss.login = function (scope, callback) {
+
+    };
+
+    /**
      * Scrolls to a specific location of your document or canvas page.
      * 
      * @param {Object} offset
