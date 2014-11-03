@@ -1,7 +1,28 @@
+var chai = require('chai'),
+    expect = chai.expect,
+    chaiAsPromised = require('chai-as-promised');
+    nock = require('nock'),
+    Sinon = require('sinon');
+
+/**
+ * @see http://stackoverflow.com/a/11477602/368691
+ */
+function requireNew (module) {
+    var modulePath = require.resolve(module);
+    
+    delete require.cache[modulePath];
+
+    return require(modulePath);
+};
+
+chai.use(chaiAsPromised);
+
 describe('Fuss.User', function () {
-    var fuss;
+    var Fuss,
+        fuss;
     beforeEach(function () {
-        fuss = new gajus.Fuss({appId: '820202914671347'});
+        Fuss = requireNew('../src/fuss.js'),
+        fuss = Fuss({appId: '820202914671347'});
     });
     describe('.getPublicProfile()', function () {
         it('returns public profile', function () {

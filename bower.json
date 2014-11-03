@@ -1,6 +1,6 @@
 {
   "name": "fuss",
-  "description": "",
+  "description": "Library for handling Facebook user authorization.",
   "version": "1.0.0",
   "keywords": [
     "facebook"

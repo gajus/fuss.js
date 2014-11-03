@@ -163,6 +163,7 @@ Fuss = function Fuss (env) {
  * @param {Array} batch
  * @param {String} batch[0].method
  * @param {String} batch[0].url
+ * @return {Promise}
  */
 Fuss.batch = function (batch) {
     return new Promise(function (resolve, reject) {
@@ -210,6 +211,7 @@ Fuss.User = function User (backpack) {
 
     /**
      * @see https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference
+     * @return {Object}
      */
     user.getPublicProfile = function () {
         return {
@@ -243,13 +245,15 @@ Fuss.User = function User (backpack) {
     return user;
 };
 
-(function(d, s, id){
- var js, fjs = d.getElementsByTagName(s)[0];
- if (d.getElementById(id)) {return;}
- js = d.createElement(s); js.id = id;
- js.src = "//connect.facebook.net/en_US/sdk.js";
- fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+if (typeof document !== 'undefined') {
+    (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+}
 
 global.gajus = global.gajus || {};
 global.gajus.Fuss = Fuss;

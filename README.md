@@ -42,6 +42,17 @@ fuss.scrollTo();
  * @return {Fuss.User}
  */
 fuss.getUser();
+
+/**
+ * Returns a promise that is resolved if all requests resolve with status code 200.
+ * 
+ * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
+ * @param {Array} batch
+ * @param {String} batch[0].method
+ * @param {String} batch[0].url
+ * @return {Promise}
+ */
+Fuss.batch();
 ```
 
 ## Download

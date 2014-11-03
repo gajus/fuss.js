@@ -1,6 +1,6 @@
-var karma = require('karma').server,
-    gulp = require('gulp'),
+var gulp = require('gulp'),
     del = require('del'),
+    mocha = require('gulp-mocha'),
     jshint = require('gulp-jshint'),
     header = require('gulp-header'),
     rename = require('gulp-rename'),
@@ -53,10 +53,9 @@ gulp.task('version', ['bundle'], function () {
 });
 
 gulp.task('test', ['version'], function (cb) {
-    karma.start({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }, cb);
+    return gulp
+        .src('./tests/*.js', {read: false})
+        .pipe(mocha());
 });
 
 gulp.task('watch', function () {
