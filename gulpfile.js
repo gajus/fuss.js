@@ -1,11 +1,11 @@
-var gulp = require('gulp'),
+var karma = require('karma').server,
+    gulp = require('gulp'),
     del = require('del'),
     jshint = require('gulp-jshint'),
     header = require('gulp-header'),
     rename = require('gulp-rename'),
     uglify = require('gulp-uglify'),
     browserify = require('gulp-browserify'),
-    exec = require('child_process').exec,
     jsonfile = require('jsonfile'),
     pkg = jsonfile.readFileSync('./package.json');
 
@@ -52,8 +52,15 @@ gulp.task('version', ['bundle'], function () {
     jsonfile.writeFileSync('./bower.json', bower);
 });
 
-gulp.task('watch', function () {
-    gulp.watch(['./src/*', './package.json'], ['default']);
+gulp.task('test', ['version'], function (cb) {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, cb);
 });
 
-gulp.task('default', ['version']);
+gulp.task('watch', function () {
+    gulp.watch(['./src/*', './tests/*', './package.json'], ['default']);
+});
+
+gulp.task('default', ['test']);

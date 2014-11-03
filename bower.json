@@ -8,8 +8,5 @@
   "license": "BSD-3-Clause",
   "authors": [
     "Gajus Kuizinas <gk@anuary.com>"
-  ],
-  "dependencies": {
-    "jquery": "~2.1.1"
-  }
+  ]
 }

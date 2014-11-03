@@ -1,5 +1,6 @@
 # Fuss.js
 
+[![Build Status](https://travis-ci.org/gajus/url-regexp.png?branch=master)](https://travis-ci.org/gajus/url-regexp)
 [![NPM version](https://badge.fury.io/js/fuss.svg)](http://badge.fury.io/js/fuss)
 [![Bower version](https://badge.fury.io/bo/fuss.svg)](http://badge.fury.io/bo/fuss)
 
@@ -11,7 +12,7 @@ Library for handling Facebook user authorization. Fuss.js is an extension of ser
 var fuss = Fuss();
 
 /**
- * Returns a promise that is resolved as soon as the SDK has completed loading.
+ * Returns a promise that is resolved as soon as the SDK has completed loading and FB.getLoginStatus is known.
  * 
  * @return {Promise}
  */
