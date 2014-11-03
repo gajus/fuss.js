@@ -1,5 +1,5 @@
 var gulp = require('gulp'),
-    clean = require('gulp-clean'),
+    del = require('del'),
     jshint = require('gulp-jshint'),
     header = require('gulp-header'),
     rename = require('gulp-rename'),
@@ -16,9 +16,8 @@ gulp.task('lint', function () {
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('clean', ['lint'], function () {
-    return gulp.src('./dist/', {read: false})
-        .pipe(clean());
+gulp.task('clean', ['lint'], function (cb) {
+    del(['./dist/'], cb);
 });
 
 gulp.task('bundle', ['clean'], function () {
