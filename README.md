@@ -8,9 +8,12 @@
 ```js
 var fuss = Fuss({appId: 'your-app-id'});
 
-fuss.loaded().then(function () {
-    // SDK has completed loading.
-});
+/**
+ * Returns a promise that is resolved as soon as the SDK has completed loading.
+ * 
+ * @return {Promise}
+ */
+fuss.loaded();
 
 /**
  * Returns true if script is loaded inside Facebook canvas.
