@@ -1,0 +1,12 @@
+{
+  "name": "fuss",
+  "description": "",
+  "version": "1.0.0",
+  "keywords": [
+    "facebook"
+  ],
+  "license": "BSD-3-Clause",
+  "authors": [
+    "Gajus Kuizinas <gk@anuary.com>"
+  ]
+}

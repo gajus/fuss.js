@@ -1,0 +1,25 @@
+{
+  "name": "fuss",
+  "description": "",
+  "keywords": [
+    "facebook"
+  ],
+  "version": "1.0.0",
+  "main": "src/fuss.js",
+  "author": "Gajus Kuizinas <gk@anuary.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gajus/fuss.js"
+  },
+  "license": "BSD-3-Clause",
+  "devDependencies": {
+    "gulp": "^3.8.9",
+    "gulp-browserify": "^0.5.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-header": "^1.2.2",
+    "gulp-jshint": "^1.8.5",
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.0.1",
+    "jsonfile": "^2.0.0"
+  }
+}
