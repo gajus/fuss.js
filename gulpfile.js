@@ -30,7 +30,8 @@ gulp.task('bundle', ['clean'], function () {
 });
 
 gulp.task('version', ['bundle'], function () {
-    var distHeader = '/**\n * @version ' + pkg.version + '\n * @link https://github.com/gajus/' + pkg.name + ' for the canonical source repository\n * @license https://github.com/gajus/' + pkg.name + '/blob/master/LICENSE BSD 3-Clause\n */\n',
+    var pkg = jsonfile.readFileSync('./package.json'),
+        distHeader = '/**\n * @version ' + pkg.version + '\n * @link https://github.com/gajus/' + pkg.name + ' for the canonical source repository\n * @license https://github.com/gajus/' + pkg.name + '/blob/master/LICENSE BSD 3-Clause\n */\n',
         bower = jsonfile.readFileSync('./bower.json');
 
     gulp
