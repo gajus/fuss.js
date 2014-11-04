@@ -4,7 +4,9 @@
 [![NPM version](https://badge.fury.io/js/fuss.svg)](http://badge.fury.io/js/fuss)
 [![Bower version](https://badge.fury.io/bo/fuss.svg)](http://badge.fury.io/bo/fuss)
 
-Library for handling Facebook user authorization. Fuss.js is an extension of server side library [Fuss](https://github.com/gajus/fuss).
+Extended Facebook JavaScript SDK. Provides intuitive API for handling user authorization, batch requests; represents the asynchronous operations using promises.
+
+Fuss.js is an extension of a server side library [Fuss](https://github.com/gajus/fuss).
 
 ## API
 

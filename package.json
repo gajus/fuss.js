@@ -1,6 +1,6 @@
 {
   "name": "fuss",
-  "description": "Library for handling Facebook user authorization.",
+  "description": "Extended Facebook JavaScript SDK. Provides intuitive API for handling user authorization, batch requests; represents the asynchronous operations using promises.",
   "keywords": [
     "facebook"
   ],
