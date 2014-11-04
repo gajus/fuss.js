@@ -1,5 +1,5 @@
 /**
- * @version 1.2.3
+ * @version 1.2.4
  * @link https://github.com/gajus/fuss for the canonical source repository
  * @license https://github.com/gajus/fuss/blob/master/LICENSE BSD 3-Clause
  */
