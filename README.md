@@ -54,7 +54,7 @@ fuss
 
 `fuss.loaded()` is a [promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) equivalent of [`window.fbAsyncInit`](https://developers.facebook.com/docs/javascript/quickstart/v2.2#advancedsetup). The difference is that you are not running at risk of overwriting the callback function and you do not need to worry about attaching a listener after Facebook has been loaded.
 
-## Authorizing User
+### Authorizing User
 
 Doesn't get more simple than this:
 
@@ -72,7 +72,7 @@ fuss
     });
 ```
 
-## Making Batch Requests
+### Making Batch Requests
 
 Making a batch request using `fuss.batch()` will return a promise that is resolved when all of the requests are resolved.
 
