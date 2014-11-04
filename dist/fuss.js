@@ -1,5 +1,5 @@
 /**
- * @version 1.1.2
+ * @version 1.1.3
  * @link https://github.com/gajus/fuss for the canonical source repository
  * @license https://github.com/gajus/fuss/blob/master/LICENSE BSD 3-Clause
  */
@@ -1051,6 +1051,7 @@ module.exports = asap;
 var Promise = require('promise'),
     Fuss,
     _loaded,
+    _loginStatus,
     _;
 
 _loaded = new Promise(function (resolve) {
@@ -1063,35 +1064,35 @@ _ = {};
 _.difference = require('lodash.difference');
 
 /**
- * @param {Object} env
- * @param {String} env.appId
+ * @param {Object} config
+ * @param {String} config.appId
  */
-Fuss = function Fuss (env) {
+Fuss = function Fuss (config) {
     var fuss,
-        _user;
+        _user = null;
 
     if (!(this instanceof Fuss)) {
-        return new Fuss(env);
+        return new Fuss(config);
     }
 
     fuss = this;
-    env = env || {};
+    config = config || {};
 
-    if (!env.appId) {
+    if (!config.appId) {
         throw new Error('Missing appId.');
     }
 
-    if (!env.version) {
+    if (!config.version) {
         throw new Error('Missing version.');
     }
 
-    _loaded.then(function () {
+    _loginStatus = _loaded.then(function () {
         return new Promise(function (resolve) {
             FB.init({
-                appId: env.appId,
+                appId: config.appId,
                 cookie: true,
                 status: false,
-                version: 'v2.1'
+                version: config.version
             });
 
             // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
@@ -1119,29 +1120,30 @@ Fuss = function Fuss (env) {
      */
     fuss._getLoginStatus = function () {
         return new Promise(function (resolve) {
-            FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
+            FB.getLoginStatus(function (loginStatus) {
+                if (loginStatus.status === 'connected') {
                     fuss
                         .batch([
-                            {method: 'get', relative_url: '/me'},
-                            {method: 'get', relative_url: '/me/permissions'}
+                            {method: 'get', relative_url: 'me'},
+                            {method: 'get', relative_url: 'me/permissions'}
                         ])
                         .then(function (response) {
                             _user = new Fuss.User({
                                 me: response[0],
-                                permissions: response[1]
+                                permissions: response[1],
+                                accessToken: loginStatus.authResponse.accessToken
                             });
 
-                            resolve({status: response.status});
+                            resolve({status: loginStatus.status});
                         });
                 } else {
                     fuss._invalidateUser();
 
-                    resolve({status: response.status});
+                    resolve({status: loginStatus.status});
                 }
             }, true);
         });
-    };
+    };   
 
     /**
      * Returns a promise that is resolved as soon as the SDK has completed loading
@@ -1150,7 +1152,7 @@ Fuss = function Fuss (env) {
      * @return {Promise}
      */
     fuss.loaded = function () {
-        return _loaded;
+        return _loginStatus;
     };
 
     /**
@@ -1276,9 +1278,12 @@ Fuss = function Fuss (env) {
      * @return {Promise}
      */
     fuss.api = function (path, options) {
+        var user;
+
         options = options || {};
         options.method = options.method || 'get';
         options.params = options.params || {};
+
         return new Promise(function (resolve, reject) {
             FB.api(path, options.method, options.params, function (response) {
                 if (response.error) {
@@ -1349,6 +1354,13 @@ Fuss.User = function User (backpack) {
     }
 
     user = this;
+
+    /**
+     * @return {String}
+     */
+    user.getAccessToken = function () {
+        return backpack.accessToken;
+    };
 
     /**
      * @see https://developers.facebook.com/docs/facebook-login/permissions/v2.2#reference
