@@ -23,7 +23,7 @@ var fuss = Fuss({appId: 'your-app-id'});
 When using Fuss.js, do not attempt to set `fbAsyncInit` or dynamically load the SDK:
 
 ```js
-// Do not use in code when using Fuss.js
+// Not needed when using Fuss.js
 window.fbAsyncInit = function() {
     FB.init({
         appId: 'your-app-id',
@@ -32,7 +32,7 @@ window.fbAsyncInit = function() {
     });
 };
 
-// Do not use in code when using Fuss.js
+// Not needed when using Fuss.js
 (function(d, s, id){
 var js, fjs = d.getElementsByTagName(s)[0];
 if (d.getElementById(id)) {return;}
