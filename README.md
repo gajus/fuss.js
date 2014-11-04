@@ -19,6 +19,52 @@ var fuss = Fuss();
 fuss.loaded();
 
 /**
+ * If user has authorized the app, returns an instance of Fuss.User.
+ * 
+ * @return {Null}
+ * @return {Fuss.User}
+ */
+fuss.getUser();
+
+/**
+ * Prompts user to authenticate the application using the Login Dialog.
+ *
+ * fuss.login will prompt the login dialog if called with scope that user has not granted.
+ *
+ * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
+ * {status: 'not_granted_scope', notGrantedScope: []}.
+ * 
+ * @param {Object} options
+ * @param {Array} options.scope
+ * @param {Boolean} options.enable_profile_selector When true, prompt the user to grant permission for one or more Pages.
+ * @param {Array} options.profile_selector_ids List of IDs to display in the profile selector.
+ * @return {Promise}
+ */
+fuss.login();
+
+/**
+ * Makes a call against the Graph API.
+ * 
+ * @param {String} path
+ * @param {Object} options
+ * @param {String} options.method The HTTP method to use for the API request. Default: get.
+ * @param {Object} options.params Graph API call parameters.
+ * @return {Promise}
+ */
+fuss.api();
+
+/**
+ * Makes a batch call against the Graph API.
+ * 
+ * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
+ * @param {Array} batch
+ * @param {String} batch[0].method
+ * @param {String} batch[0].url
+ * @return {Promise}
+ */
+fuss.batch();
+
+/**
  * Returns true if script is loaded inside Facebook canvas.
  *
  * @return {Boolean}
@@ -34,25 +80,6 @@ fuss.isInCanvas();
  * @param {Number} offset.y
  */
 fuss.scrollTo();
-
-/**
- * If user has authorized the app, returns an instance of Fuss.User.
- * 
- * @return {Null}
- * @return {Fuss.User}
- */
-fuss.getUser();
-
-/**
- * Returns a promise that is resolved if all requests resolve with status code 200.
- * 
- * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
- * @param {Array} batch
- * @param {String} batch[0].method
- * @param {String} batch[0].url
- * @return {Promise}
- */
-Fuss.batch();
 ```
 
 ## Download

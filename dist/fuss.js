@@ -1153,13 +1153,24 @@ Fuss = function Fuss (env) {
     };
 
     /**
+     * Prompts user to authenticate the application using the Login Dialog.
+     *
+     * fuss.login will prompt the login dialog if called with scope that user has not granted.
+     *
+     * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
+     * {status: 'not_granted_scope', notGrantedScope: []}.
+     * 
      * @param {Object} options
      * @param {Array} options.scope
+     * @param {Boolean} options.enable_profile_selector When true, prompt the user to grant permission for one or more Pages.
+     * @param {Array} options.profile_selector_ids List of IDs to display in the profile selector.
      * @return {Promise}
      */
     fuss.login = function (options) {
         options = options || {};
         options.scope = options.scope || [];
+        options.enable_profile_selector = options.enable_profile_selector || false;
+        options.profile_selector_ids = options.profile_selector_ids || [];
 
         return new Promise(function (resolve) {
             var user = fuss.getUser();
@@ -1174,16 +1185,16 @@ Fuss = function Fuss (env) {
                     fuss
                         .getLoginStatus()
                         .then(function () {
-                            var missingPermissions;
+                            var notGrantedScope;
 
                             user = fuss.getUser();
 
-                            missingPermissions = _.difference(options.scope, user.getGrantedPermissions());
+                            notGrantedScope = _.difference(options.scope, user.getGrantedPermissions());
 
-                            if (missingPermissions.length) {
+                            if (notGrantedScope.length) {
                                 resolve({
-                                    status: 'missing_permission',
-                                    missingPermissions: missingPermissions
+                                    status: 'not_granted_scope',
+                                    notGrantedScope: notGrantedScope
                                 });
                             } else {
                                 resolve({
@@ -1194,6 +1205,8 @@ Fuss = function Fuss (env) {
                 }, {
                     auth_type: 'rerequest',
                     scope: options.scope.join(','),
+                    enable_profile_selector: options.enable_profile_selector,
+                    profile_selector_ids: options.profile_selector_ids.join(','),
                     return_scopes: true
                 });
             } else {
@@ -1269,6 +1282,30 @@ Fuss = function Fuss (env) {
     };
 
     /**
+     * Makes a call against the Graph API.
+     * 
+     * @param {String} path
+     * @param {Object} options
+     * @param {String} options.method The HTTP method to use for the API request. Default: get.
+     * @param {Object} options.params Graph API call parameters.
+     * @return {Promise}
+     */
+    fuss.api = function (path, options) {
+        options = options || {};
+        options.method = options.method || 'get';
+        options.params = options.params || {};
+        return new Promise(function (resolve, reject) {
+            FB.api(path, options.method, options.params, function (response) {
+                if (response.error) {
+                    return reject(new Fuss.Error(response.error.message, response.error.type, response.error.code));
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+    };
+
+    /**
      * Makes a batch call against the Graph API.
      * 
      * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
@@ -1297,30 +1334,6 @@ Fuss = function Fuss (env) {
                 }
 
                 resolve(resolution);
-            });
-        });
-    };
-
-    /**
-     * Makes a call against the Graph API.
-     * 
-     * @param {String} path
-     * @param {Object} options
-     * @param {String} options.method The HTTP method to use for the API request. Default: get.
-     * @param {Object} options.params Graph API call parameters.
-     * @return {Promise}
-     */
-    fuss.api = function (path, options) {
-        options = options || {};
-        options.method = options.method || 'get';
-        options.params = options.params || {};
-        return new Promise(function (resolve, reject) {
-            FB.api(path, options.method, options.params, function (response) {
-                if (response.error) {
-                    return reject(new Fuss.Error(response.error.message, response.error.type, response.error.code));
-                } else {
-                    resolve(response);
-                }
             });
         });
     };
