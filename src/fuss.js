@@ -53,7 +53,7 @@ Fuss = function Fuss (env) {
      * 
      * @return {Promise}
      */
-    fuss.getLoginStatus = function () {
+    fuss._getLoginStatus = function () {
         return new Promise(function (resolve) {
             FB.getLoginStatus(function (response) {
                 if (response.status === 'connected') {
@@ -80,7 +80,8 @@ Fuss = function Fuss (env) {
     }
 
     /**
-     * Returns a promise that is resolved as soon as the SDK has completed loading and FB.getLoginStatus is known.
+     * Returns a promise that is resolved as soon as the SDK has completed loading
+     * and FB.getLoginStatus is known.
      * 
      * @return {Promise}
      */

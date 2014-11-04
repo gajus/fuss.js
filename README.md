@@ -12,7 +12,8 @@ Library for handling Facebook user authorization. Fuss.js is an extension of ser
 var fuss = Fuss();
 
 /**
- * Returns a promise that is resolved as soon as the SDK has completed loading and FB.getLoginStatus is known.
+ * Returns a promise that is resolved as soon as the SDK has completed loading
+ * and FB.getLoginStatus is known.
  * 
  * @return {Promise}
  */
