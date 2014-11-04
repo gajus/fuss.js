@@ -1050,14 +1050,24 @@ module.exports = asap;
 (function (global){
 var Promise = require('promise'),
     Fuss,
+    _loaded,
     _;
+
+_loaded = new Promise(function (resolve) {
+    window.fbAsyncInit = function () {
+        resolve();
+    };
+});
 
 _ = {};
 _.difference = require('lodash.difference');
 
+/**
+ * @param {Object} env
+ * @param {String} env.appId
+ */
 Fuss = function Fuss (env) {
     var fuss,
-        _loaded,
         _user;
 
     if (!(this instanceof Fuss)) {
@@ -1071,30 +1081,32 @@ Fuss = function Fuss (env) {
         throw new Error('Missing appId.');
     }
 
-    _loaded = new Promise(function (resolve) {
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: env.appId,
-                cookie: true,
-                status: false,
-                version: 'v2.1'
-            });
+    _loaded.then(function () {
+        return new Promise(function (resolve) {
+            window.fbAsyncInit = function () {
+                FB.init({
+                    appId: env.appId,
+                    cookie: true,
+                    status: false,
+                    version: 'v2.1'
+                });
 
-            // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
-            // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
-            // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
-            fuss
-                .getLoginStatus()
-                .then(resolve);            
+                // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
+                // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
+                // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
+                fuss
+                    .getLoginStatus()
+                    .then(resolve);            
 
-            /**
-             * This event is fired when your app notices that there is no longer a valid
-             * user (in other words, it had a session but can no longer validate the current user).
-             */
-            FB.Event.subscribe('auth.logout', function(response) {
-                fuss._invalidateUser();
-            });
-        };
+                /**
+                 * This event is fired when your app notices that there is no longer a valid
+                 * user (in other words, it had a session but can no longer validate the current user).
+                 */
+                FB.Event.subscribe('auth.logout', function(response) {
+                    fuss._invalidateUser();
+                });
+            };
+        });
     });
     
     /**

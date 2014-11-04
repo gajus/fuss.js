@@ -8,11 +8,33 @@ Extended Facebook JavaScript SDK. Provides intuitive API for handling user autho
 
 Fuss.js is an extension of a server side library [Fuss](https://github.com/gajus/fuss).
 
+## Usage
+
+Fuss will load and initialize [Facebook JavaScript SDK](https://developers.facebook.com/docs/javascript/quickstart/v2.2) for you. When 
+
+```js
+/**
+ * @param {Object} env
+ * @param {String} env.appId
+ */
+var fuss = Fuss({appId: 'your-app-id'});
+```
+
+After you have initialized an instance of Fuss, you can access the `FB`.
+
+```js
+fuss
+    .loaded();
+    .then(function () {
+        FB.Event.subscribe('edge.create', console.log);
+    });
+```
+
+`fuss.loaded()` is a [promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) equivalent of [`window.fbAsyncInit`](https://developers.facebook.com/docs/javascript/quickstart/v2.2#advancedsetup). The difference is that you are not running at risk of overwriting the callback function, and you do not need to worry about using `fuss.loaded()` after Facebook has been loaded.
+
 ## API
 
 ```js
-var fuss = Fuss();
-
 /**
  * Returns a promise that is resolved as soon as the SDK has completed loading
  * and FB.getLoginStatus is known.
