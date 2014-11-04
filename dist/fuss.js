@@ -1124,8 +1124,8 @@ Fuss = function Fuss (config) {
                 if (loginStatus.status === 'connected') {
                     fuss
                         .batch([
-                            {method: 'get', relative_url: 'me'},
-                            {method: 'get', relative_url: 'me/permissions'}
+                            {method: 'get', relative_url: 'v2.1/me'},
+                            {method: 'get', relative_url: 'v2.1/me/permissions'}
                         ])
                         .then(function (response) {
                             _user = new Fuss.User({
