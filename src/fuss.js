@@ -31,6 +31,10 @@ Fuss = function Fuss (env) {
         throw new Error('Missing appId.');
     }
 
+    if (!env.version) {
+        throw new Error('Missing version.');
+    }
+
     _loaded.then(function () {
         return new Promise(function (resolve) {
             FB.init({

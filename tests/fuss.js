@@ -23,7 +23,7 @@ describe('Fuss', function () {
         fuss;
     beforeEach(function () {
         Fuss = requireNew('../src/fuss.js');
-        fuss = Fuss({appId: '820202914671347'});
+        fuss = Fuss({appId: '820202914671347', version: 'v2.1'});
     });
     //describe('.api()', function () {});
     //describe('.batch()', function () {});

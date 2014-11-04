@@ -16,8 +16,12 @@ Fuss will load and initialize [Facebook JavaScript SDK](https://developers.faceb
 /**
  * @param {Object} env
  * @param {String} env.appId
+ * @param {String} env.version
  */
-var fuss = Fuss({appId: 'your-app-id'});
+var fuss = Fuss({
+    appId: 'your-app-id',
+    version: 'v2.1'
+});
 ```
 
 When using Fuss.js, do not attempt to set `fbAsyncInit` or dynamically load the SDK:
