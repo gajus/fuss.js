@@ -10,7 +10,7 @@ Fuss.js is an extension of a server side library [Fuss](https://github.com/gajus
 
 ## Usage
 
-Fuss will load and initialize [Facebook JavaScript SDK](https://developers.facebook.com/docs/javascript/quickstart/v2.2) for you. When 
+Fuss will load and initialize [Facebook JavaScript SDK](https://developers.facebook.com/docs/javascript/quickstart/v2.2) for you. 
 
 ```js
 /**
@@ -18,6 +18,28 @@ Fuss will load and initialize [Facebook JavaScript SDK](https://developers.faceb
  * @param {String} env.appId
  */
 var fuss = Fuss({appId: 'your-app-id'});
+```
+
+When using Fuss.js, do not attempt to set `fbAsyncInit` or dynamically load the SDK:
+
+```js
+// Do not use in code when using Fuss.js
+window.fbAsyncInit = function() {
+    FB.init({
+        appId: 'your-app-id',
+        xfbml: true,
+        version: 'v2.1'
+    });
+};
+
+// Do not use in code when using Fuss.js
+(function(d, s, id){
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) {return;}
+js = d.createElement(s); js.id = id;
+js.src = "//connect.facebook.net/en_US/sdk.js";
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
 ```
 
 After you have initialized an instance of Fuss, you can access the `FB`.
