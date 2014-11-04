@@ -1,9 +1,14 @@
 var Promise = require('promise'),
-    Fuss;
+    Fuss,
+    _;
+
+_ = {};
+_.difference = require('lodash.difference');
 
 Fuss = function Fuss (env) {
     var fuss,
-        loaded;
+        _loaded,
+        _user;
 
     if (!(this instanceof Fuss)) {
         return new Fuss(env);
@@ -16,7 +21,7 @@ Fuss = function Fuss (env) {
         throw new Error('Missing appId.');
     }
 
-    loaded = new Promise(function (resolve) {
+    _loaded = new Promise(function (resolve) {
         window.fbAsyncInit = function () {
             FB.init({
                 appId: env.appId,
@@ -24,37 +29,55 @@ Fuss = function Fuss (env) {
                 status: false,
                 version: 'v2.1'
             });
-            // FB.login {status: true} is supposed to do this.
-            // This is a defensive approach to avoid whatever cache Facebook SDK may impose.
+
+            // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
             // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
             // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
-            FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
-                    Fuss
-                        .batch([
-                            {method: 'get', relative_url: '/me'},
-                            {method: 'get', relative_url: '/me/permissions'}
-                        ])
-                        .then(function (response) {
-                            env.user = new Fuss.User({
-                                me: response[0],
-                                permissions: response[1]
-                            });
-                        });
-                } else {
-                    resolve();
-                }
-            }, true);
+            fuss
+                .getLoginStatus()
+                .then(resolve);            
 
             /**
              * This event is fired when your app notices that there is no longer a valid
              * user (in other words, it had a session but can no longer validate the current user).
              */
             FB.Event.subscribe('auth.logout', function(response) {
-                env.user = null;
+                fuss._invalidateUser();
             });
         };
     });
+    
+    /**
+     * Get and populate the login status.
+     * Promise is resolved with _user.
+     * 
+     * @return {Promise}
+     */
+    fuss.getLoginStatus = function () {
+        return new Promise(function (resolve) {
+            FB.getLoginStatus(function (response) {
+                if (response.status === 'connected') {
+                    fuss
+                        .batch([
+                            {method: 'get', relative_url: '/me'},
+                            {method: 'get', relative_url: '/me/permissions'}
+                        ])
+                        .then(function (response) {
+                            _user = new Fuss.User({
+                                me: response[0],
+                                permissions: response[1]
+                            });
+
+                            resolve({status: response.status});
+                        });
+                } else {
+                    fuss._invalidateUser();
+
+                    resolve({status: response.status});
+                }
+            }, true);
+        });
+    }
 
     /**
      * Returns a promise that is resolved as soon as the SDK has completed loading and FB.getLoginStatus is known.
@@ -62,7 +85,7 @@ Fuss = function Fuss (env) {
      * @return {Promise}
      */
     fuss.loaded = function () {
-        return loaded;
+        return _loaded;
     };
 
     /**
@@ -72,23 +95,63 @@ Fuss = function Fuss (env) {
      * @return {Fuss.User}
      */
     fuss.getUser = function () {
-        if (!env.user) {
-            return null;
-        }
+        return _user;
+    };
 
-        // @todo
+    fuss._invalidateUser = function () {
+        _user = null;
     };
 
     /**
      * @param {Object} options
-     * @param {Function} options.callback
      * @param {Array} options.scope
+     * @return {Promise}
      */
     fuss.login = function (options) {
-        var user = fuss.getUser();
+        options = options || {};
+        options.scope = options.scope || [];
 
-        if (!user) {
-        }
+        return new Promise(function (resolve) {
+            var user = fuss.getUser();
+
+            // User has not authorized the app or has not granted the required permissions.
+            if (!user || user && _.difference(options.scope, user.getGrantedPermissions()).length) {
+                return FB.login(function (response) {
+                    if (response.status === 'not_authorized') {
+                        return resolve({status: 'not_authorized'});
+                    }
+
+                    fuss
+                        .getLoginStatus()
+                        .then(function () {
+                            var missingPermissions;
+
+                            user = fuss.getUser();
+
+                            missingPermissions = _.difference(options.scope, user.getGrantedPermissions());
+
+                            if (missingPermissions.length) {
+                                resolve({
+                                    status: 'missing_permission',
+                                    missingPermissions: missingPermissions
+                                });
+                            } else {
+                                resolve({
+                                    status: 'authorized'
+                                });
+                            }
+                        });
+                }, {
+                    auth_type: 'rerequest',
+                    scope: options.scope.join(','),
+                    return_scopes: true
+                });
+            } else {
+                resolve({
+                    status: 'authorized'
+                });
+            }
+        });
     };
 
     /**
@@ -154,39 +217,63 @@ Fuss = function Fuss (env) {
     fuss.isInCanvas = function () {
         return top !== self;
     };
-};
 
-/**
- * Returns a promise that is resolved if all requests resolve with status code 200.
- * 
- * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
- * @param {Array} batch
- * @param {String} batch[0].method
- * @param {String} batch[0].url
- * @return {Promise}
- */
-Fuss.batch = function (batch) {
-    return new Promise(function (resolve, reject) {
-        FB.api('/', 'post', {
-            batch: batch,
-            include_headers: false
-        }, function (response) {
-            var j = response.length,
-                resolution = [];
+    /**
+     * Makes a batch call against the Graph API.
+     * 
+     * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
+     * @param {Array} batch
+     * @param {String} batch[0].method
+     * @param {String} batch[0].url
+     * @return {Promise}
+     */
+    fuss.batch = function (batch) {
+        return new Promise(function (resolve, reject) {
+            FB.api('/', 'post', {
+                batch: batch,
+                include_headers: false
+            }, function (response) {
+                var j = response.length,
+                    resolution = [];
 
-            while (j--) {
-                response[j].body = JSON.parse(response[j].body);
+                while (j--) {
+                    response[j].body = JSON.parse(response[j].body);
 
-                if (response[j].body.error) {
-                    return reject(new Fuss.Error(response[j].body.message, response[j].body.type, response[j].body.code));
+                    if (response[j].body.error) {
+                        return reject(new Fuss.Error(response[j].body.message, response[j].body.type, response[j].body.code));
+                    }
+
+                    resolution.unshift(response[j].body);
                 }
 
-                resolution.unshift(response[j].body);
-            }
-
-            resolve(resolution);
+                resolve(resolution);
+            });
         });
-    });
+    };
+
+    /**
+     * Makes a call against the Graph API.
+     * 
+     * @param {String} path
+     * @param {Object} options
+     * @param {String} options.method The HTTP method to use for the API request. Default: get.
+     * @param {Object} options.params Graph API call parameters.
+     * @return {Promise}
+     */
+    fuss.api = function (path, options) {
+        options = options || {};
+        options.method = options.method || 'get';
+        options.params = options.params || {};
+        return new Promise(function (resolve, reject) {
+            FB.api(path, options.method, options.params, function (response) {
+                if (response.error) {
+                    return reject(new Fuss.Error(response.error.message, response.error.type, response.error.code));
+                } else {
+                    resolve(response);
+                }
+            });
+        });
+    };
 };
 
 Fuss.Error = function (message, type, code) {

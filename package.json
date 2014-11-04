@@ -29,6 +29,7 @@
     "sinon": "^1.11.1"
   },
   "dependencies": {
+    "lodash.difference": "^2.4.1",
     "promise": "^6.0.1"
   }
 }
