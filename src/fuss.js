@@ -33,29 +33,27 @@ Fuss = function Fuss (env) {
 
     _loaded.then(function () {
         return new Promise(function (resolve) {
-            window.fbAsyncInit = function () {
-                FB.init({
-                    appId: env.appId,
-                    cookie: true,
-                    status: false,
-                    version: 'v2.1'
-                });
+            FB.init({
+                appId: env.appId,
+                cookie: true,
+                status: false,
+                version: 'v2.1'
+            });
 
-                // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
-                // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
-                // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
-                fuss
-                    ._getLoginStatus()
-                    .then(resolve);            
+            // FB.login {status: true} does not make FB.getLoginStatus to do the roundtrip.
+            // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
+            // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
+            fuss
+                ._getLoginStatus()
+                .then(resolve);            
 
-                /**
-                 * This event is fired when your app notices that there is no longer a valid
-                 * user (in other words, it had a session but can no longer validate the current user).
-                 */
-                FB.Event.subscribe('auth.logout', function(response) {
-                    fuss._invalidateUser();
-                });
-            };
+            /**
+             * This event is fired when your app notices that there is no longer a valid
+             * user (in other words, it had a session but can no longer validate the current user).
+             */
+            FB.Event.subscribe('auth.logout', function(response) {
+                fuss._invalidateUser();
+            });
         });
     });
     
