@@ -34,10 +34,11 @@ fuss.getUser();
  * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
  * {status: 'not_granted_scope', notGrantedScope: []}.
  * 
+ * @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
  * @param {Object} options
  * @param {Array} options.scope
- * @param {Boolean} options.enable_profile_selector When true, prompt the user to grant permission for one or more Pages.
- * @param {Array} options.profile_selector_ids List of IDs to display in the profile selector.
+ * @param {Boolean} options.enable_profile_selector
+ * @param {Array} options.profile_selector_ids
  * @return {Promise}
  */
 fuss.login();
