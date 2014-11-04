@@ -222,20 +222,31 @@ Fuss = function Fuss (config) {
      * Makes a call against the Graph API.
      * 
      * @param {String} path
-     * @param {Object} options
-     * @param {String} options.method The HTTP method to use for the API request. Default: get.
-     * @param {Object} options.params Graph API call parameters.
+     * @param {String} method The HTTP method to use for the API request. Default: get.
+     * @param {Object} parameters Graph API call parameters.
      * @return {Promise}
      */
-    fuss.api = function (path, options) {
-        var user;
+    fuss.api = function (path) {
+        var method = 'get',
+            parameters = {};
 
-        options = options || {};
-        options.method = options.method || 'get';
-        options.params = options.params || {};
+        // fuss.api({String} url, {String} method, {Object} parameters)
+        // fuss.api({String} url, {String} method)
+        // fuss.api({String} url, {Object} parameters)
+        if (arguments[1]) {
+            if (typeof arguments[1] === 'string') {
+                method = arguments[1];
+
+                if (arguments[2]) {
+                    parameters = arguments[2];
+                }
+            } else {
+                parameters = arguments[1];
+            }
+        }
 
         return new Promise(function (resolve, reject) {
-            FB.api(path, options.method, options.params, function (response) {
+            FB.api(path, method, parameters, function (response) {
                 if (response.error) {
                     return reject(new Fuss.Error(response.error.message, response.error.type, response.error.code));
                 } else {
