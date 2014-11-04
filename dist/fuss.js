@@ -1220,57 +1220,26 @@ Fuss = function Fuss (env) {
     };
 
     /**
-     * Scrolls to a specific location of your document or canvas page.
+     * Scrolls to a specific location of the canvas page,
+     * or the document itself, when the script is loaded not in canvas.
      * 
      * @param {Object} offset
      * @param {Number} offset.x
      * @param {Number} offset.y
      */
     fuss.scrollTo = function (offset) {
-        var stepsLength = 2,
-            stepsUpdate = 0,
-            steps = {};
-
         offset = offset || {};
         offset.x = offset.x || 0;
         offset.y = offset.y || 0;
 
         if (!fuss.isInCanvas()) {
-            $('body')
-                .animate({
-                    scrollLeft: offset.x,
-                    scrollTop: offset.y
-                }, {
-                    duration: 500
-                });
-            
-        } else {
             // @todo Document magic constant.
-            y += 25;
-            
-            FB.Canvas.getPageInfo(function(pageInfo){
-                $({
-                    x: pageInfo.scrollLeft,
-                    y: pageInfo.scrollTop
-                }).animate(
-                    {
-                        x: offset.x,
-                        y: offset.y
-                    },
-                    {
-                        duration: 500,
-                        step: function (now, fx) {
-                            steps[fx.prop] = now;
+            offset.y += 25;
 
-                            if (++stepsUpdate == stepsLength) {
-                                stepsUpdate = 0;
-
-                                FB.Canvas.scrollTo(steps.x, steps.y);
-                            }
-                        }
-                    }
-                );
-            });
+            FB.Canvas.scrollTo(offset.x, offset.y);
+        } else {
+            document.body.scrollLeft = document.documentElement.scrollLeft = offset.x;
+            document.body.scrollTop = document.documentElement.scrollTop = offset.y;
         }
     };
 
