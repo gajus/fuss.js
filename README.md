@@ -56,7 +56,20 @@ fuss
 
 ## Authorizing User
 
+Doesn't get more simple than this:
+
 ```js
+fuss
+    .login({scope: ['email']})
+    .then(function (response) {
+        if (response.status === 'authorized') {
+
+        } else if (response.status === 'not_authorized') {
+
+        } else if (response.status === 'not_granted_scope') {
+            response.notGrantendScope; // List of not granted extended permissions.
+        }
+    });
 ```
 
 ## Making Batch Requests
@@ -74,6 +87,22 @@ fuss
         results[0]; // me
         results[1]; // me/permissions
         results[2]; // me/feed
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+```
+
+Promises work with `fuss.api()` too:
+
+```js
+fuss
+    .api('me')
+    .then(function (me) {
+        me;
+    })
+    .catch(function (error) {
+        console.log(error);
     });
 ```
 
