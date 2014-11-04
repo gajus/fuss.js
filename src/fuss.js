@@ -45,7 +45,7 @@ Fuss = function Fuss (env) {
                 // @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
                 // @see https://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus#servers
                 fuss
-                    .getLoginStatus()
+                    ._getLoginStatus()
                     .then(resolve);            
 
                 /**
@@ -89,7 +89,7 @@ Fuss = function Fuss (env) {
                 }
             }, true);
         });
-    }
+    };
 
     /**
      * Returns a promise that is resolved as soon as the SDK has completed loading
@@ -147,7 +147,7 @@ Fuss = function Fuss (env) {
                     }
 
                     fuss
-                        .getLoginStatus()
+                        ._getLoginStatus()
                         .then(function () {
                             var notGrantedScope;
 
