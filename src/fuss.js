@@ -243,11 +243,17 @@ Fuss = function Fuss (env) {
      * 
      * @see https://developers.facebook.com/docs/graph-api/making-multiple-requests#multiple_methods
      * @param {Array} batch
-     * @param {String} batch[0].method
+     * @param {String} batch[0].method Default: get.
      * @param {String} batch[0].url
+     * @param {String} batch[0].body
      * @return {Promise}
      */
     fuss.batch = function (batch) {
+        batch = batch.map(function (request) {
+            request.method = request.method || 'get';
+
+            return request;
+        });
         return new Promise(function (resolve, reject) {
             FB.api('/', 'post', {
                 batch: batch,
