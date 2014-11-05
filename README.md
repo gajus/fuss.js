@@ -60,18 +60,25 @@ fuss
 
 ### Authorizing User
 
-Doesn't get more simple than this:
+`fuss.login()` prompts user to authenticate the application using the [Login Dialog](https://developers.facebook.com/docs/reference/dialogs/oauth/).
+
+`fuss.login()` will prompt the login dialog if called with scope that user has not granted.
+
+Promise is resolved with `{status: 'not_authorized'}`, `{status: 'authorized'}` or `{status: 'not_granted_scope', notGrantedScope: []}`. When `status` is "not_granted_scope", `notGrantedScope` will have the list of the not granted permissions.
 
 ```js
 fuss
     .login({scope: ['email']})
     .then(function (response) {
         if (response.status === 'authorized') {
-
+            // Ok
         } else if (response.status === 'not_authorized') {
-
+            // User has not authorized the app.
         } else if (response.status === 'not_granted_scope') {
-            response.notGrantendScope; // List of not granted extended permissions.
+            // User has authorized the app, but has not authorized all of the scope.
+
+            // List of not granted extended permissions.
+            response.notGrantendScope;
         }
     });
 ```
@@ -135,7 +142,8 @@ fuss.getUser();
  * fuss.login will prompt the login dialog if called with scope that user has not granted.
  *
  * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
- * {status: 'not_granted_scope', notGrantedScope: []}.
+ * {status: 'not_granted_scope', notGrantedScope: []}. When `status` is "not_granted_scope",
+ * `notGrantedScope` will have the list of the not granted permissions.
  * 
  * @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
  * @param {Object} options
@@ -150,12 +158,15 @@ fuss.login();
  * Makes a call against the Graph API.
  * 
  * @param {String} path
- * @param {Object} options
- * @param {String} options.method The HTTP method to use for the API request. Default: get.
- * @param {Object} options.params Graph API call parameters.
+ * @param {String} method The HTTP method to use for the API request. Default: get.
+ * @param {Object} parameters Graph API call parameters.
  * @return {Promise}
  */
 fuss.api();
+
+// fuss.api({String} url, {String} method, {Object} parameters);
+// fuss.api({String} url, {String} method);
+// fuss.api({String} url, {Object} parameters);
 
 /**
  * Makes a batch call against the Graph API.
