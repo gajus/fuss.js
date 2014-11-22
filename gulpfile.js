@@ -7,7 +7,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     browserify = require('gulp-browserify'),
     jsonfile = require('jsonfile'),
-    pkg = jsonfile.readFileSync('./package.json');
+    GitDown = require('gitdown');
 
 gulp.task('lint', function () {
     return gulp
@@ -22,7 +22,7 @@ gulp.task('clean', ['lint'], function (cb) {
 
 gulp.task('bundle', ['clean'], function () {
     return gulp
-        .src('./src/' +  pkg.name + '.js')
+        .src('./src/fuss.js')
         .pipe(browserify({
             //debug : true
         }))
@@ -59,8 +59,15 @@ gulp.task('test', ['version'], function (cb) {
         .pipe(mocha());
 });
 
+gulp.task('gitdown', function () {
+    return GitDown
+        .read('.gitdown/README.md')
+        .write('README.md');
+});
+
 gulp.task('watch', function () {
     gulp.watch(['./src/*', './tests/*', './package.json'], ['default']);
+    gulp.watch(['./.gitdown/*'], ['gitdown']);
 });
 
 gulp.task('default', ['test']);

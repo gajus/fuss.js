@@ -1,18 +1,14 @@
-<!--
-This file has been generated using GitDown (https://github.com/gajus/gitdown).
-Direct edits to this will be be overwritten. Look for GitDown markup file under ./.gitdown/ path.
--->
-<h1 id="fuss-js">Fuss.js</h1>
+# Fuss.js
 
-[![Travis build status](http://img.shields.io/travis/gajus/fuss.js/master.svg?style=flat)](https://travis-ci.org/gajus/fuss.js)
-[![NPM version](http://img.shields.io/npm/v/fuss.svg?style=flat)](https://www.npmjs.org/package/fuss)
-[![Bower version](http://img.shields.io/bower/v/fuss.svg?style=flat)](http://bower.io/search/?q=fuss)
+{"gitdown": "badge", "name": "travis"}
+{"gitdown": "badge", "name": "npm-version"}
+{"gitdown": "badge", "name": "bower-version"}
 
 Extended Facebook JavaScript SDK. Provides intuitive API for handling user authorization, batch requests; represents the asynchronous operations using promises.
 
 Fuss.js is an extension of a server side library [Fuss](https://github.com/gajus/fuss).
 
-<h2 id="fuss-js-usage">Usage</h2>
+## Usage
 
 Fuss will load and initialize [Facebook JavaScript SDK](https://developers.facebook.com/docs/javascript/quickstart/v2.2) for you. 
 
@@ -62,7 +58,7 @@ fuss
 
 `fuss.loaded()` is a [promise](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) equivalent of [`window.fbAsyncInit`](https://developers.facebook.com/docs/javascript/quickstart/v2.2#advancedsetup). The difference is that you are not running at risk of overwriting the callback function and you do not need to worry about attaching a listener after Facebook has been loaded.
 
-<h3 id="fuss-js-usage-authorizing-user">Authorizing User</h3>
+### Authorizing User
 
 `fuss.login()` prompts user to authenticate the application using the [Login Dialog](https://developers.facebook.com/docs/reference/dialogs/oauth/).
 
@@ -87,7 +83,7 @@ fuss
     });
 ```
 
-<h3 id="fuss-js-usage-making-batch-requests">Making Batch Requests</h3>
+### Making Batch Requests
 
 Making a batch request using `fuss.batch()` will return a promise that is resolved when all of the requests are resolved.
 
@@ -121,7 +117,7 @@ fuss
     });
 ```
 
-<h2 id="fuss-js-api">API</h2>
+## API
 
 ```js
 /**
@@ -201,7 +197,7 @@ fuss.isInCanvas();
 fuss.scrollTo();
 ```
 
-<h2 id="fuss-js-download">Download</h2>
+## Download
 
 Using [Bower](http://bower.io/):
 
