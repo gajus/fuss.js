@@ -210,8 +210,3 @@ Using [NPM](https://www.npmjs.org/):
 ```sh
 npm install fuss
 ```
-
-The old-fashioned way, download either of the following files:
-
-* https://raw.githubusercontent.com/gajus/fuss/master/dist/fuss.js
-* https://raw.githubusercontent.com/gajus/fuss/master/dist/fuss.min.js
