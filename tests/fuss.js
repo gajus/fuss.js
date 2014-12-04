@@ -18,6 +18,36 @@ function requireNew (module) {
 
 chai.use(chaiAsPromised);
 
+describe('Fuss()', function () {
+    var Fuss,
+        config;
+    beforeEach(function () {
+        Fuss = requireNew('../src/fuss.js');
+        config = {appId: '820202914671347', version: 'v2.1'};
+    });
+
+    it('requires config.appId', function () {
+        delete config.appId;
+        expect(function () {
+            Fuss(config);
+        }).to.throw(Error, 'Missing config.appId.');
+    });
+
+    it('requires config.version', function () {
+        delete config.version;
+        expect(function () {
+            Fuss(config);
+        }).to.throw(Error, 'Missing config.version.');
+    });
+
+    it('does not accept unknown configuration properties', function () {
+        config.test = true;
+        expect(function () {
+            Fuss(config);
+        }).to.throw(Error, 'Unknown configuration property ("test").');
+    });
+});
+
 describe('Fuss', function () {
     var Fuss,
         fuss;

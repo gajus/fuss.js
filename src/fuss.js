@@ -29,12 +29,18 @@ Fuss = function Fuss (config) {
     config = config || {};
 
     if (!config.appId) {
-        throw new Error('Missing appId.');
+        throw new Error('Missing config.appId.');
     }
 
     if (!config.version) {
-        throw new Error('Missing version.');
+        throw new Error('Missing config.version.');
     }
+
+    Object.keys(config).forEach(function (setting) {
+        if (['appId', 'version'].indexOf(setting) == -1) {
+            throw new Error('Unknown configuration property ("' + setting + '").');
+        }
+    });
 
     _loginStatus = _loaded.then(function () {
         return new Promise(function (resolve) {
