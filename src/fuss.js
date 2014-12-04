@@ -15,7 +15,9 @@ _.difference = require('lodash.difference');
 
 /**
  * @param {Object} config
- * @param {String} config.appId
+ * @param {String} config.appId App ID. Required parameter.
+ * @param {String} config.version Graph API version. Required parameter.
+ * @param {Boolean} config.debug Loads debug version of JavaScript SDK. Default: false.
  */
 Fuss = function Fuss (config) {
     var fuss,
@@ -36,11 +38,42 @@ Fuss = function Fuss (config) {
         throw new Error('Missing config.version.');
     }
 
+    config.debug = !!config.debug;
+
     Object.keys(config).forEach(function (setting) {
-        if (['appId', 'version'].indexOf(setting) == -1) {
+        if (['appId', 'version', 'debug'].indexOf(setting) == -1) {
             throw new Error('Unknown configuration property ("' + setting + '").');
         }
     });
+
+    /**
+     * @param {Boolean} debug Indicates whether to load debug version of the JavaScript SDK.
+     */
+    fuss._loadOfficialFacebookSDK = function (debug) {
+        var script,
+            parent;
+
+        if (typeof document !== 'undefined') {
+            if (document.getElementById('facebook-jssdk')) {
+                throw new Error('Facebook SDK cannot be loaded before Fuss.');
+            }
+
+            script = document.createElement('script');
+            parent = document.getElementsByTagName('script')[0];
+            
+            script.id = 'facebook-jssdk';
+            
+            if (debug) {
+                script.src = '//connect.facebook.net/en_US/sdk/debug.js';
+            } else {
+                script.src = '//connect.facebook.net/en_US/sdk.js';
+            }
+            
+            parent.parentNode.insertBefore(script, parent);
+        }
+    };
+
+    fuss._loadOfficialFacebookSDK(config.debug);
 
     _loginStatus = _loaded.then(function () {
         return new Promise(function (resolve) {
@@ -364,16 +397,6 @@ Fuss.User = function User (backpack) {
 
     return user;
 };
-
-if (typeof document !== 'undefined') {
-    (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-}
 
 global.gajus = global.gajus || {};
 global.gajus.Fuss = Fuss;

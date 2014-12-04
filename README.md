@@ -18,9 +18,10 @@ Fuss will load and initialize [Facebook JavaScript SDK](https://developers.faceb
 
 ```js
 /**
- * @param {Object} env
- * @param {String} env.appId
- * @param {String} env.version
+ * @param {Object} config
+ * @param {String} config.appId App ID. Required parameter.
+ * @param {String} config.version Graph API version. Required parameter.
+ * @param {Boolean} config.debug Loads debug version of JavaScript SDK. Default: false.
  */
 var fuss = Fuss({
     appId: 'your-app-id',
