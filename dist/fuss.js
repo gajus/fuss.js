@@ -629,13 +629,17 @@ function isNative(value) {
 module.exports = isNative;
 
 },{}],20:[function(require,module,exports){
+module.exports=require(18)
+},{"lodash._isnative":21}],21:[function(require,module,exports){
+module.exports=require(19)
+},{}],22:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/core.js')
 require('./lib/done.js')
 require('./lib/es6-extensions.js')
 require('./lib/node-extensions.js')
-},{"./lib/core.js":21,"./lib/done.js":22,"./lib/es6-extensions.js":23,"./lib/node-extensions.js":24}],21:[function(require,module,exports){
+},{"./lib/core.js":23,"./lib/done.js":24,"./lib/es6-extensions.js":25,"./lib/node-extensions.js":26}],23:[function(require,module,exports){
 'use strict';
 
 var asap = require('asap')
@@ -742,7 +746,7 @@ function doResolve(fn, onFulfilled, onRejected) {
   }
 }
 
-},{"asap":25}],22:[function(require,module,exports){
+},{"asap":27}],24:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js')
@@ -757,7 +761,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
     })
   })
 }
-},{"./core.js":21,"asap":25}],23:[function(require,module,exports){
+},{"./core.js":23,"asap":27}],25:[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -867,7 +871,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 }
 
-},{"./core.js":21,"asap":25}],24:[function(require,module,exports){
+},{"./core.js":23,"asap":27}],26:[function(require,module,exports){
 'use strict';
 
 //This file contains then/promise specific extensions that are only useful for node.js interop
@@ -929,7 +933,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   })
 }
 
-},{"./core.js":21,"asap":25}],25:[function(require,module,exports){
+},{"./core.js":23,"asap":27}],27:[function(require,module,exports){
 (function (process){
 
 // Use the fastest possible means to execute a task in a future turn
@@ -1046,7 +1050,7 @@ module.exports = asap;
 
 
 }).call(this,require("1YiZ5S"))
-},{"1YiZ5S":1}],26:[function(require,module,exports){
+},{"1YiZ5S":1}],28:[function(require,module,exports){
 (function (global){
 var Promise = require('promise'),
     Fuss,
@@ -1061,6 +1065,7 @@ _loaded = new Promise(function (resolve) {
 });
 
 _ = {};
+_.isArray = require('lodash.isArray');
 _.difference = require('lodash.difference');
 
 /**
@@ -1081,19 +1086,17 @@ Fuss = function Fuss (config) {
     config = config || {};
 
     if (!config.appId) {
-        throw new Error('Missing config.appId.');
+        throw new Error('Missing Fuss() config.appId.');
     }
 
     if (!config.version) {
-        throw new Error('Missing config.version.');
+        throw new Error('Missing Fuss() config.version.');
     }
 
     config.debug = !!config.debug;
 
-    Object.keys(config).forEach(function (setting) {
-        if (['appId', 'version', 'debug'].indexOf(setting) == -1) {
-            throw new Error('Unknown configuration property ("' + setting + '").');
-        }
+    _.difference(Object.keys(config), ['appId', 'version', 'debug']).forEach(function (setting) {
+        throw new Error('Unknown configuration property ("' + setting + '").');
     });
 
     /**
@@ -1214,20 +1217,37 @@ Fuss = function Fuss (config) {
      * fuss.login will prompt the login dialog if called with scope that user has not granted.
      *
      * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
-     * {status: 'not_granted_scope', notGrantedScope: []}.
+     * {status: 'not_granted_scope', notGrantedScope: []}. When `status` is "not_granted_scope",
+     * `notGrantedScope` will have the list of the not granted permissions.
      * 
      * @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
      * @param {Object} options
      * @param {Array} options.scope
-     * @param {Boolean} options.enable_profile_selector
-     * @param {Array} options.profile_selector_ids
+     * @param {Boolean} options.enableProfileSelector
+     * @param {Array} options.profileSelectorIds
      * @return {Promise}
      */
     fuss.login = function (options) {
         options = options || {};
         options.scope = options.scope || [];
-        options.enable_profile_selector = options.enable_profile_selector || false;
-        options.profile_selector_ids = options.profile_selector_ids || [];
+        options.enableProfileSelector = options.enableProfileSelector || false;
+        options.profileSelectorIds = options.profileSelectorIds || [];
+
+        _.difference(Object.keys(options), ['scope', 'enableProfileSelector', 'profileSelectorIds']).forEach(function (setting) {
+            throw new Error('Unknown fuss.login() option ("' + setting + '").');
+        });
+
+        if (!_.isArray(options.scope)) {
+            throw new Error('fuss.login() option.scope must be an array.');
+        }
+
+        if (!_.isArray(options.profileSelectorIds)) {
+            throw new Error('fuss.login() option.profileSelectorIds must be an array.');
+        }
+
+        if (typeof options.enableProfileSelector !== 'boolean') {
+            throw new Error('fuss.login() option.enableProfileSelector must be a boolean.');
+        }
 
         return new Promise(function (resolve) {
             var user = fuss.getUser();
@@ -1262,8 +1282,8 @@ Fuss = function Fuss (config) {
                 }, {
                     auth_type: 'rerequest',
                     scope: options.scope.join(','),
-                    enable_profile_selector: options.enable_profile_selector,
-                    profile_selector_ids: options.profile_selector_ids.join(','),
+                    enable_profile_selector: options.enableProfileSelector,
+                    profile_selector_ids: options.profileSelectorIds.join(','),
                     return_scopes: true
                 });
             } else {
@@ -1453,4 +1473,4 @@ global.gajus.Fuss = Fuss;
 
 module.exports = Fuss;
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash.difference":2,"promise":20}]},{},[26])
+},{"lodash.difference":2,"lodash.isArray":20,"promise":22}]},{},[28])

@@ -30,14 +30,14 @@ describe('Fuss()', function () {
         delete config.appId;
         expect(function () {
             Fuss(config);
-        }).to.throw(Error, 'Missing config.appId.');
+        }).to.throw(Error, 'Missing Fuss() config.appId.');
     });
 
     it('requires config.version', function () {
         delete config.version;
         expect(function () {
             Fuss(config);
-        }).to.throw(Error, 'Missing config.version.');
+        }).to.throw(Error, 'Missing Fuss() config.version.');
     });
 
     it('does not accept unknown configuration properties', function () {
@@ -45,6 +45,38 @@ describe('Fuss()', function () {
         expect(function () {
             Fuss(config);
         }).to.throw(Error, 'Unknown configuration property ("test").');
+    });
+
+    describe('.login()', function () {
+        var fuss;
+        
+        beforeEach(function () {
+            fuss = Fuss({appId: '820202914671347', version: 'v2.1'});
+        });
+
+        it('does not accept unknown configuration properties', function () {
+            expect(function () {
+                fuss.login({test: true});
+            }).to.throw(Error, 'Unknown fuss.login() option ("test").');
+        });
+
+        it('ensures that config.scope is an array', function () {
+            expect(function () {
+                fuss.login({scope: 'test'});
+            }).to.throw(Error, 'fuss.login() option.scope must be an array.');
+        });
+
+        it('ensures that config.profileSelectorIds is an array', function () {
+            expect(function () {
+                fuss.login({profileSelectorIds: 'test'});
+            }).to.throw(Error, 'fuss.login() option.profileSelectorIds must be an array.');
+        });
+
+        it('ensures that config.enableProfileSelector is a boolean', function () {
+            expect(function () {
+                fuss.login({enableProfileSelector: 'test'});
+            }).to.throw(Error, 'fuss.login() option.enableProfileSelector must be a boolean.');
+        });
     });
 });
 

@@ -153,8 +153,8 @@ fuss.getUser();
  * @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
  * @param {Object} options
  * @param {Array} options.scope
- * @param {Boolean} options.enable_profile_selector
- * @param {Array} options.profile_selector_ids
+ * @param {Boolean} options.enableProfileSelector
+ * @param {Array} options.profileSelectorIds
  * @return {Promise}
  */
 fuss.login();

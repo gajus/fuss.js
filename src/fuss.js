@@ -11,6 +11,7 @@ _loaded = new Promise(function (resolve) {
 });
 
 _ = {};
+_.isArray = require('lodash.isArray');
 _.difference = require('lodash.difference');
 
 /**
@@ -31,19 +32,17 @@ Fuss = function Fuss (config) {
     config = config || {};
 
     if (!config.appId) {
-        throw new Error('Missing config.appId.');
+        throw new Error('Missing Fuss() config.appId.');
     }
 
     if (!config.version) {
-        throw new Error('Missing config.version.');
+        throw new Error('Missing Fuss() config.version.');
     }
 
     config.debug = !!config.debug;
 
-    Object.keys(config).forEach(function (setting) {
-        if (['appId', 'version', 'debug'].indexOf(setting) == -1) {
-            throw new Error('Unknown configuration property ("' + setting + '").');
-        }
+    _.difference(Object.keys(config), ['appId', 'version', 'debug']).forEach(function (setting) {
+        throw new Error('Unknown configuration property ("' + setting + '").');
     });
 
     /**
@@ -164,20 +163,37 @@ Fuss = function Fuss (config) {
      * fuss.login will prompt the login dialog if called with scope that user has not granted.
      *
      * Promise is resolved with {status: 'not_authorized'}, {status: 'authorized'} or
-     * {status: 'not_granted_scope', notGrantedScope: []}.
+     * {status: 'not_granted_scope', notGrantedScope: []}. When `status` is "not_granted_scope",
+     * `notGrantedScope` will have the list of the not granted permissions.
      * 
      * @see https://developers.facebook.com/docs/reference/javascript/FB.login/v2.2
      * @param {Object} options
      * @param {Array} options.scope
-     * @param {Boolean} options.enable_profile_selector
-     * @param {Array} options.profile_selector_ids
+     * @param {Boolean} options.enableProfileSelector
+     * @param {Array} options.profileSelectorIds
      * @return {Promise}
      */
     fuss.login = function (options) {
         options = options || {};
         options.scope = options.scope || [];
-        options.enable_profile_selector = options.enable_profile_selector || false;
-        options.profile_selector_ids = options.profile_selector_ids || [];
+        options.enableProfileSelector = options.enableProfileSelector || false;
+        options.profileSelectorIds = options.profileSelectorIds || [];
+
+        _.difference(Object.keys(options), ['scope', 'enableProfileSelector', 'profileSelectorIds']).forEach(function (setting) {
+            throw new Error('Unknown fuss.login() option ("' + setting + '").');
+        });
+
+        if (!_.isArray(options.scope)) {
+            throw new Error('fuss.login() option.scope must be an array.');
+        }
+
+        if (!_.isArray(options.profileSelectorIds)) {
+            throw new Error('fuss.login() option.profileSelectorIds must be an array.');
+        }
+
+        if (typeof options.enableProfileSelector !== 'boolean') {
+            throw new Error('fuss.login() option.enableProfileSelector must be a boolean.');
+        }
 
         return new Promise(function (resolve) {
             var user = fuss.getUser();
@@ -212,8 +228,8 @@ Fuss = function Fuss (config) {
                 }, {
                     auth_type: 'rerequest',
                     scope: options.scope.join(','),
-                    enable_profile_selector: options.enable_profile_selector,
-                    profile_selector_ids: options.profile_selector_ids.join(','),
+                    enable_profile_selector: options.enableProfileSelector,
+                    profile_selector_ids: options.profileSelectorIds.join(','),
                     return_scopes: true
                 });
             } else {

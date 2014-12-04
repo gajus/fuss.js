@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "lodash.difference": "^2.4.1",
+    "lodash.isarray": "^2.4.1",
     "promise": "^6.0.1"
   }
 }
